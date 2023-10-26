@@ -1,0 +1,2 @@
+#ingore all bash shell scripts
+*.sh
