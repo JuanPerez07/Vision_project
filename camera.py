@@ -13,4 +13,4 @@ cv2.imwrite('/home/vil/testimage.jpg', image)
 cam.release()
 cv2.destroyAllWindows()
 
-#añadiendo un comentario
+#añadiendo un comentari otroo
