@@ -53,9 +53,11 @@ def readingCamera(cam,pose):
 		shoulder=[landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
 		elbow=[landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
 		wrist=[landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-
+		hip=[landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+		
 		#print (calcular_angulo(hombro, codo, muñeca))
 		servo.value = math.sin(math.radians(calcular_angulo(shoulder,elbow,wrist)*2))
+		servo.value = math.sin(math.radians(calcular_angulo(shoulder,elbow,hip)*2))
 		# show the image 
 		cv.imshow('Mediapipe Feed', image)
 		k = cv.waitKey(1)
