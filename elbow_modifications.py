@@ -13,19 +13,29 @@ import math
 factory = PiGPIOFactory()
 
 servo = Servo(18, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
+#servo = Servo(18, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
+
 # LOCAL FUNCTIONS:
-def calcular_angulo(a,b,c):
+def calcular_angulo(a,b,c,d):
 	a=np.array(a) #Hombro
 	b=np.array(b) #Codo
 	c=np.array(c) #Muñeca
-	radianes=np.arctan2(c[1]-b[1],c[0]-b[0])-np.arctan2(a[1]-b[1],a[0]-b[0])
-	angulo=np.abs(radianes*180.0/np.pi)
-
-	if angulo>180.0:
-		angulo=360-angulo
+	d=np.array(d) #cadera
+	
+	radianes1=np.arctan2(c[1]-b[1],c[0]-b[0])-np.arctan2(a[1]-b[1],a[0]-b[0])
+	angulo1=np.abs(radianes1*180.0/np.pi)
+	radianes2=np.arctan2(b[1]-a[1],b[0]-a[0])-np.arctan2(d[1]-a[1],d[0]-a[0])
+	angulo2=np.abs(radianes2*180.0/np.pi)
+	
+	if angulo1>180.0:
+		angulo1=360-angulo1
+    	if angulo2>180.0:
+		angulo2=360-angulo2
     
-	return angulo
+	return angulo1, angulo2
+	
 def recolorImage(frame,pose):
+	
 	# recolor to RGB
 	img = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 	img.flags.writeable = False
@@ -36,6 +46,7 @@ def recolorImage(frame,pose):
 	img = cv.cvtColor(img,cv.COLOR_RGB2BGR)
 
 	return results, img
+	
 def readingCamera(cam,pose):
 #------ Camera activation / desactivation ---------------
 	angulo_anterior = 0
@@ -55,9 +66,9 @@ def readingCamera(cam,pose):
 		wrist=[landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
 		hip=[landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
 		
-		#print (calcular_angulo(hombro, codo, muñeca))
-		servo.value = math.sin(math.radians(calcular_angulo(shoulder,elbow,wrist)*2))
-		servo.value = math.sin(math.radians(calcular_angulo(shoulder,elbow,hip)*2))
+		#print (calcular_angulo(hombro, codo, muñeca, cadera))
+		servo1.value, servo2.value = math.sin(math.radians(calcular_angulo(shoulder,elbow,wrist,hip)*2))
+		
 		# show the image 
 		cv.imshow('Mediapipe Feed', image)
 		k = cv.waitKey(1)
