@@ -6,14 +6,14 @@ import mediapipe as mp
 import cv2 as cv
 import numpy as np
 from gpiozero.pins.pigpio import PiGPIOFactory
-from gpiozero import Servo
+from gpiozero import AngularServo
 from time import sleep
 import math
 
 factory = PiGPIOFactory()
 
-servo1 = Servo(18, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
-servo2 = Servo(23, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
+servo1 = AngularServo(18, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
+servo2 = AngularServo(23, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
 
 # LOCAL FUNCTIONS:
 def calcular_angulo(a,b,c,d):
@@ -69,8 +69,16 @@ def readingCamera(cam,pose):
 		
 		#print (calcular_angulo(hombro, codo, muñeca, cadera))
 		angle1, angle2 = calcular_angulo(shoulder,elbow,wrist,hip)
-		servo1.value = math.sin(math.radians( angle1*2))
-		servo2.value = math.sin(math.radians( angle2*2))
+		if(angle1 <= 180):
+			servo1.angle = (angle1 - 90)
+		else:
+			servo1.angle = (180 - 90)
+		if(angle2 <= 140 ):
+			servo2.angle = ((angle2)- 90)
+		else:
+			servo2.angle = ((140) - 90)
+		
+
 		# show the image 
 		cv.imshow('Mediapipe Feed', image)
 		k = cv.waitKey(1)
