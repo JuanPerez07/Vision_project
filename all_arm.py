@@ -16,7 +16,7 @@ servo1 = AngularServo(18, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_fa
 servo2 = AngularServo(23, min_pulse_width=0.0005, max_pulse_width=0.0025, pin_factory = factory)
 
 # LOCAL FUNCTIONS:
-def calcular_angulo(a,b,c,d):
+def calculateAngles(a,b,c,d):
 	a=np.array(a) # left shoulder
 	b=np.array(b) # left elbow
 	c=np.array(c) # left wrist
@@ -24,18 +24,18 @@ def calcular_angulo(a,b,c,d):
 	# Calculate the input for each servo
 	# angulo2 -> servo1 (first joint; references: hip, shoulder, elbow) 
 	# angulo1 -> servo2 (second joint; references: shoulder, elbow, wrist)
-	radianes1=np.arctan2(c[1]-b[1],c[0]-b[0])-np.arctan2(a[1]-b[1],a[0]-b[0])
-	angulo1=np.abs(radianes1*180.0/np.pi)
-	radianes2=np.arctan2(b[1]-a[1],b[0]-a[0])-np.arctan2(d[1]-a[1],d[0]-a[0])
-	angulo2=np.abs(radianes2*180.0/np.pi)
+	rads1=np.arctan2(c[1]-b[1],c[0]-b[0])-np.arctan2(a[1]-b[1],a[0]-b[0])
+	angle1=np.abs(rads1*180.0/np.pi)
+	rads2=np.arctan2(b[1]-a[1],b[0]-a[0])-np.arctan2(d[1]-a[1],d[0]-a[0])
+	angle2=np.abs(rads2*180.0/np.pi)
 	# We must make sure our values are ranged from 0 to 180 degrees
-	if angulo1>180.0:
-		angulo1=360-angulo1
+	if angle1>180.0:
+		angle1=360-angle1
 
-	if (angulo2>180.0):
-		angulo2=360-angulo2
+	if (angle2>180.0):
+		angle2=360-angle2
     
-	return angulo2, angulo1 
+	return angle2, angle1 
 	
 def recolorImage(frame,pose):
 	# Each of the frames of the video must be transformed to RGB by recoloring
@@ -69,7 +69,7 @@ def readingCamera(cam,pose):
 		wrist=[landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
 		hip=[landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x,landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
 		# We get the angles we'll use as input for the servos 
-		angle1, angle2 = calcular_angulo(shoulder,elbow,wrist,hip)
+		angle1, angle2 = calculateAngles(shoulder,elbow,wrist,hip)
 		# We must convert according to our specificacions 
 		if(angle1 <= 180): # servo1 range it's (-90, 90)
 			servo1.angle = (angle1 - 90)
